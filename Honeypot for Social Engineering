@@ -1,1 +1,41 @@
+from flask import Flask, render_template, request, redirect, url_for
+import threading
+import time
 
+app = Flask(__name__)
+
+def start_honeypot():
+    app.run(host="0.0.0.0", port=80)
+
+def log_credentials(username, password):
+    # Add your logging or alerting logic here
+    print(f"Captured credentials - Username: {username}, Password: {password}")
+
+# Fake login page
+@app.route("/login", methods=["GET", "POST"])
+def fake_login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        # Log captured credentials
+        log_credentials(username, password)
+        
+        # Redirect to a real login page to simulate a successful login
+        return redirect(url_for("real_login"))
+    
+    return render_template("fake_login.html")
+
+# Real login page (simulated)
+@app.route("/real-login")
+def real_login():
+    return render_template("real_login.html")
+
+if __name__ == "__main__":
+    # Start the honeypot server in a separate thread
+    honeypot_thread = threading.Thread(target=start_honeypot)
+    honeypot_thread.start()
+
+    # Simulate capturing credentials after a delay (adjust as needed)
+    time.sleep(10)
+    log_credentials("attacker", "password123")
