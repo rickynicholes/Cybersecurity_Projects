@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+
+class UserBehaviorAnalytics:
+    def __init__(self):
+        # Initialize an empty DataFrame to store user activity
+        self.user_activity = pd.DataFrame(columns=["Timestamp", "User", "Activity"])
+
+    def log_activity(self, user, activity):
+        # Log user activity with timestamp
+        timestamp = pd.Timestamp.now()
+        self.user_activity = self.user_activity.append({"Timestamp": timestamp, "User": user, "Activity": activity},
+                                                       ignore_index=True)
+
+    def analyze_behavior(self):
+        # Analyze user behavior for anomalies (customize based on your environment)
+        user_counts = self.user_activity['User'].value_counts()
+        anomaly_threshold = np.percentile(user_counts, 95)  # Example: Flag users in the top 5% of activity
+
+        anomalies = user_counts[user_counts > anomaly_threshold]
+
+        if not anomalies.empty:
+            print("Potential anomalies detected:")
+            print(anomalies)
+        else:
+            print("No anomalies detected.")
+
+# Example usage
+uba_system = UserBehaviorAnalytics()
+
+# Simulate user activities
+uba_system.log_activity("user1", "Login")
+uba_system.log_activity("user2", "Access File")
+uba_system.log_activity("user1", "Logout")
+uba_system.log_activity("user3", "Access Database")
+uba_system.log_activity("user2", "Logout")
+
+# Analyze user behavior for anomalies
+uba_system.analyze_behavior()
