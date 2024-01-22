@@ -1,0 +1,41 @@
+# Simulated Phishing Awareness Program
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import time
+
+def send_phishing_email(target_email):
+    # Configure your SMTP server details
+    smtp_server = "your_smtp_server"
+    smtp_port = 587
+    smtp_username = "your_smtp_username"
+    smtp_password = "your_smtp_password"
+
+    # Craft the phishing email
+    sender_email = "fake.sender@example.com"
+    subject = "Important Account Update"
+    body = "Dear user, click the following link to update your account: http://malicious-site.com/update-account"
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = target_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    # Connect to the SMTP server and send the email
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(sender_email, target_email, message.as_string())
+
+# Simulate a phishing campaign targeting users
+def simulate_phishing_campaign(user_emails):
+    for email in user_emails:
+        send_phishing_email(email)
+        print(f"Phishing email sent to: {email}")
+        time.sleep(2)  # Add a delay between emails to avoid issues
+
+# Example usage
+user_emails = ["user1@example.com", "user2@example.com", "user3@example.com"]
+simulate_phishing_campaign(user_emails)
